@@ -78,7 +78,16 @@ export function createStepGame({
     sides: [side],
     totalActions: TOTAL,
     chapterCount: CHAPTER_COUNT,
-    meta,
+    meta: {
+      ...meta,
+      // Chapter labels per side + the steps-per-chapter rule, so the client can
+      // derive "which chapter does this feedback belong to" from the resolution's
+      // own stepIndex (race-proof) instead of eventCard/turn, which the server
+      // pushes ahead to the NEXT chapter in the same batch as a chapter-ending
+      // resolution (see MatchView).
+      stepsPerChapter: 2,
+      chapters: { [side]: phases.map((p) => ({ title: p.title, date: p.date })) },
+    },
 
     // Only ever solo here; soloSide is the single side. One human side, no AI rival.
     initMatch() {
